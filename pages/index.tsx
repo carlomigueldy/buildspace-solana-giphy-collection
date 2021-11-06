@@ -1,50 +1,20 @@
 import { Box, Link, Text } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
 import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AppMainLayout from "../layouts/AppMainLayout";
-
-declare let window: any;
+import * as web3 from "@solana/web3.js";
+import { useWallet } from "../hooks/useWallet.hook";
 
 const Home: NextPage = () => {
-  const toast = useToast();
+  const wallet = useWallet();
 
   useEffect(() => {
-    initWallet();
+    wallet.initialize();
   }, []);
 
-  async function initWallet() {
-    try {
-      let solana;
-      if (typeof window !== "undefined") {
-        solana = window.solana;
-      }
-
-      if (!solana) {
-        return toast({
-          title: "Solana Wallet not found",
-          description: "Download and install a Phantom Wallet to continue",
-          status: "warning",
-        });
-      }
-
-      if (solana.isPhantom) {
-        console.log("solana.isPhantom", solana.isPhantom);
-      }
-    } catch (error) {
-      console.error(error);
-      return toast({
-        title: "Unexpected Error",
-        description: "An unexpected error occurred",
-        status: "error",
-      });
-    }
-  }
-
   return (
-    <AppMainLayout>
+    <AppMainLayout onClickConnectWallet={wallet.connect}>
       <Box
         display="flex"
         justifyContent="center"

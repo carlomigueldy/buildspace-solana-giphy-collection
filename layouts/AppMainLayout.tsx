@@ -4,12 +4,16 @@ import AppNavbar from "../components/AppNavbar";
 
 export type AppMainLayoutProps = {
   children?: React.ReactNode;
+  onClickConnectWallet?: () => void;
 };
 
-const AppMainLayout = ({ children }: AppMainLayoutProps) => {
+const AppMainLayout = ({
+  children,
+  onClickConnectWallet,
+}: AppMainLayoutProps) => {
   return (
     <>
-      <AppNavbar onClickConnectWallet={() => console.log("Hello World")} />
+      <AppNavbar onClickConnectWallet={onClickConnectWallet} />
 
       {<Box minHeight="100vh">{children}</Box>}
 
