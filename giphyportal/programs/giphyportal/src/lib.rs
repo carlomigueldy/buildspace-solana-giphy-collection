@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("39ZyRmpqhPUHfYnr2Z3DsToAzEnti56KEdrqS3HCVJAn");
 
 #[program]
 pub mod giphyportal {
@@ -14,12 +14,12 @@ pub mod giphyportal {
     }
 
     // The fucntion now accepts a gif_link param from the user.
-    pub fn add_gif(ctx: Context<AddGif>, gif_link: String) -> ProgramResult {
+    pub fn add_gif(ctx: Context<AddGif>, _gif_link: String) -> ProgramResult {
         let base_account = &mut ctx.accounts.base_account;
 
         // Build the struct.
         let item = ItemStruct {
-            gif_link: gif_link.to_string(),
+            gif_link: _gif_link.to_string(),
             user_address: *base_account.to_account_info().key,
         };
 

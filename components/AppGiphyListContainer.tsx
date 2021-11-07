@@ -7,21 +7,23 @@ import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { GIFS } from "../constants/giphy";
 import GlobalContext from "../context/global";
+import useGiphyPortalIdl from "../hooks/useGiphyPortalIdl.hook";
 import { useWallet } from "../hooks/useWallet.hook";
 
 const AppGiphyListContainer = () => {
   const wallet = useWallet();
   const globalContext = useContext(GlobalContext);
+  const idl = useGiphyPortalIdl();
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
-  const [giphyList, setGiphyList] = useState<string[]>([]);
+  const [giphyList, setGiphyList] = useState<string[] | null | undefined>(null);
 
   useEffect(() => {
-    setGiphyList(GIFS);
+    getGifList();
   }, []);
 
   useEffect(() => {
@@ -34,6 +36,17 @@ const AppGiphyListContainer = () => {
   const onSubmit = handleSubmit((data) => {
     console.log(data);
   });
+
+  const getGifList = async () => {
+    const result = await idl.getGifList();
+    console.log("[getGifList] result", result);
+    setGiphyList(result);
+  };
+
+  const createGifAccount = async () => {
+    await idl.createGifAccount();
+    await getGifList();
+  };
 
   return (
     <>
@@ -56,27 +69,37 @@ const AppGiphyListContainer = () => {
         </Box>
       </form>
 
-      <Wrap spacing="30px" my={10} mx={5}>
-        {giphyList.map((gif, index) => {
-          return (
-            <WrapItem key={index}>
-              <Image
-                src={gif}
-                borderRadius="sm"
-                alt={gif}
-                height="200"
-                width="200"
-                transition="all .2s ease-in-out"
-                cursor="pointer"
-                onClick={() => window.open(gif, "_blank")}
-                _hover={{
-                  transform: "scale(1.25)",
-                }}
-              />
-            </WrapItem>
-          );
-        })}
-      </Wrap>
+      {!giphyList ? (
+        <Box mt={32} display="flex" justifyContent="center" alignItems="center">
+          <Button onClick={createGifAccount}>
+            Do One-Time Initialization For GIPHY Program Account
+          </Button>
+        </Box>
+      ) : (
+        <>
+          <Wrap spacing="30px" my={10} mx={5}>
+            {giphyList?.map((gif, index) => {
+              return (
+                <WrapItem key={index}>
+                  <Image
+                    src={gif}
+                    borderRadius="sm"
+                    alt={gif}
+                    height="200"
+                    width="200"
+                    transition="all .2s ease-in-out"
+                    cursor="pointer"
+                    onClick={() => window.open(gif, "_blank")}
+                    _hover={{
+                      transform: "scale(1.25)",
+                    }}
+                  />
+                </WrapItem>
+              );
+            })}
+          </Wrap>
+        </>
+      )}
     </>
   );
 };

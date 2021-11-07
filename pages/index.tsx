@@ -1,9 +1,9 @@
-import { Box, Text, Wrap, WrapItem } from "@chakra-ui/layout";
 import type { NextPage } from "next";
-import AppMainLayout from "../layouts/AppMainLayout";
+import { Box, Text } from "@chakra-ui/layout";
 import { useWallet } from "../hooks/useWallet.hook";
 import { useEffect } from "react";
 import { Button } from "@chakra-ui/button";
+import AppMainLayout from "../layouts/AppMainLayout";
 import AppGiphyListContainer from "../components/AppGiphyListContainer";
 
 const Home: NextPage = () => {
