@@ -1,6 +1,6 @@
 declare let window: any;
 
-export function useSolana() {
+function useSolana() {
   let solana;
   if (typeof window !== "undefined") {
     solana = window.solana;
@@ -8,3 +8,5 @@ export function useSolana() {
 
   return solana;
 }
+
+export default useSolana;

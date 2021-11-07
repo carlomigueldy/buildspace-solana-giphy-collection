@@ -1,9 +1,11 @@
 import { useToast } from "@chakra-ui/toast";
 import { useContext, useEffect, useState } from "react";
 import GlobalContext, { WalletAddress } from "../context/global";
-import { useSolana } from "./useSolana.hook";
+import useLogger from "./useLogger.hook";
+import useSolana from "./useSolana.hook";
 
 export const useWallet = () => {
+  const log = useLogger("useWallet");
   const toast = useToast();
   const solana = useSolana();
   const [walletAddress, setWalletAddress] = useState<WalletAddress>(null);
@@ -39,15 +41,15 @@ export const useWallet = () => {
       }
 
       if (!solana.isConnected) {
-        console.warn("[useWallet->initialize] Wallet not connected to dApp");
+        log.w("Wallet not connected to dApp");
       }
 
       if (solana.isPhantom) {
         const response = await solana.connect({ onlyIfTrusted: true });
         const walletAddress = response.publicKey?.toString();
-        console.log("✅ Connected with Public Key:", walletAddress);
+        log.s("Connected with Public Key:", walletAddress);
         setWalletAddress(walletAddress);
-        console.log(`[useWallet->initialize] walletAddress`, walletAddress);
+        log.v(`walletAddress`, walletAddress);
       }
 
       setWalletAddress(walletAddress);
@@ -65,8 +67,8 @@ export const useWallet = () => {
     try {
       const response = await solana.connect();
       const walletAddress = response.publicKey?.toString();
-      console.log("✅ Connected with Public Key:", walletAddress);
-      console.log("[useWallet->connect] walletAddress", walletAddress);
+      log.s("Connected with Public Key:", walletAddress);
+      log.v("walletAddress", walletAddress);
       setWalletAddress(walletAddress);
     } catch (error: any) {
       console.error(error);

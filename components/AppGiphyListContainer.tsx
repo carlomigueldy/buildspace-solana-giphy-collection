@@ -8,9 +8,11 @@ import { useForm } from "react-hook-form";
 import { GIFS } from "../constants/giphy";
 import GlobalContext from "../context/global";
 import useGiphyPortalIdl from "../hooks/useGiphyPortalIdl.hook";
+import useLogger from "../hooks/useLogger.hook";
 import { useWallet } from "../hooks/useWallet.hook";
 
 const AppGiphyListContainer = () => {
+  const log = useLogger("AppGiphyListContainer");
   const wallet = useWallet();
   const globalContext = useContext(GlobalContext);
   const idl = useGiphyPortalIdl();
@@ -23,34 +25,37 @@ const AppGiphyListContainer = () => {
   const [giphyList, setGiphyList] = useState<string[] | null | undefined>(null);
 
   useEffect(() => {
-    getGifList();
+    getGiphyList();
   }, []);
 
   useEffect(() => {
-    console.log(
+    log.i(
       "[AppGiphyListContainer] wallet.walletAddress",
       globalContext.walletAddress
     );
   }, [globalContext.walletAddress]);
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
+  const sendGiphy = handleSubmit(async (data) => {
+    log.i(data);
+
+    await idl.sendGiphy(data.giphyUrl);
+    await getGiphyList();
   });
 
-  const getGifList = async () => {
-    const result = await idl.getGifList();
-    console.log("[getGifList] result", result);
+  const getGiphyList = async () => {
+    const result = await idl.getGiphyList();
+    log.i("[getGiphyList] result", result);
     setGiphyList(result);
   };
 
   const createGifAccount = async () => {
-    await idl.createGifAccount();
-    await getGifList();
+    await idl.createGiphyAccount();
+    await getGiphyList();
   };
 
   return (
     <>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={sendGiphy}>
         <Box display="flex" justifyContent="center" alignItems="start">
           <Box width="300px">
             <Input

@@ -8,44 +8,53 @@ import {
   SystemProgram,
 } from "@solana/web3.js";
 import idl from "../idl/giphyportal.json";
-import { useSolana } from "./useSolana.hook";
+import useLogger from "./useLogger.hook";
+import useSolana from "./useSolana.hook";
 
 const useGiphyPortalIdl = () => {
+  const log = useLogger("useGiphyPortalIdl");
   const solana = useSolana();
   const baseAccount = Keypair.generate();
   const programId = new PublicKey(idl.metadata.address);
-  const network = clusterApiUrl("devnet");
-  const opts = {
-    preflightCommitment: "processed" as ConnectionConfig,
-  };
 
-  const getProvider = () => {
-    const connection = new Connection(network, opts.preflightCommitment);
-    const provider = new Provider(connection, solana, opts.preflightCommitment);
+  function getProgram() {
+    const provider = getProvider();
+    const program = new Program(idl as Idl, programId, provider);
+    return program;
+  }
+
+  function getProvider() {
+    const network = clusterApiUrl("devnet");
+    const options = {
+      preflightCommitment: "processed" as ConnectionConfig,
+    };
+    const connection = new Connection(network, options.preflightCommitment);
+    const provider = new Provider(
+      connection,
+      solana,
+      options.preflightCommitment
+    );
     return provider;
-  };
+  }
 
-  const getGifList = async () => {
+  const getGiphyList = async () => {
     try {
-      const provider = getProvider();
-      const program = new Program(idl as Idl, programId, provider);
+      const program = getProgram();
       const account = await program.account.baseAccount.fetch(
         baseAccount.publicKey
       );
-
-      console.log("[useGiphyPortalIdl] Got the account", account);
+      log.i("Got the account", account);
       return account.gifList;
     } catch (error) {
-      console.log("[useGiphyPortalIdl] Error in getGifs: ", error);
+      log.e("Error in getGifs: ", error);
       return null;
     }
   };
 
-  const createGifAccount = async () => {
+  const createGiphyAccount = async () => {
     try {
       const provider = getProvider();
-      const program = new Program(idl as Idl, programId, provider);
-      console.log("ping");
+      const program = getProgram();
       await program.rpc.initialize({
         accounts: {
           baseAccount: baseAccount.publicKey,
@@ -54,24 +63,37 @@ const useGiphyPortalIdl = () => {
         },
         signers: [baseAccount],
       });
-      console.log(
-        "[useGiphyPortalIdl] Created a new BaseAccount w/ address:",
+      log.i(
+        "Created a new BaseAccount w/ address:",
         baseAccount.publicKey.toString()
       );
     } catch (error) {
-      console.log(
-        "[useGiphyPortalIdl] Error creating BaseAccount account:",
-        error
-      );
+      log.e("Error creating BaseAccount account:", error);
+    }
+  };
+
+  const sendGiphy = async (giphyUrl: string) => {
+    try {
+      const program = getProgram();
+      await program.rpc.addGif(giphyUrl, {
+        accounts: {
+          baseAccount: baseAccount.publicKey,
+        },
+      });
+      log.i("GIF sucesfully sent to program", giphyUrl);
+    } catch (error) {
+      log.e("Error sending GIF:", error);
     }
   };
 
   return {
     idl,
     programId,
-    createGifAccount,
     getProvider,
-    getGifList,
+    getProgram,
+    createGiphyAccount,
+    getGiphyList,
+    sendGiphy,
   };
 };
 
