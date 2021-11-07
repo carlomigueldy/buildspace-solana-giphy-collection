@@ -13,7 +13,7 @@ const AppFooter = () => {
       alignItems="center"
     >
       Built with 💖 by{" "}
-      <Link href="https://twitter.com/CarloMiguelDy">carlomigueldy.eth</Link>
+      <Link ml={2} href="https://twitter.com/CarloMiguelDy">carlomigueldy.eth</Link>
     </Box>
   );
 };

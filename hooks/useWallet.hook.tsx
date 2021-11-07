@@ -24,6 +24,10 @@ export const useWallet = () => {
   }
 
   useEffect(() => {
+    if (!walletAddress) {
+      return;
+    }
+
     globalContext.walletAddress = walletAddress;
     globalContext.truncatedWalletAddress = truncatedWalletAddress();
   }, [walletAddress]);

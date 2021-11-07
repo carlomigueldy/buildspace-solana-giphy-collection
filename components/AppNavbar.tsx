@@ -57,11 +57,11 @@ const AppNavbar = ({
   }, [scrollY]);
 
   function onCopyWalletAddress() {
-    // copyWalletAddress.onCopy();
-    // toast({
-    //   title: "Copied to Clipboard",
-    //   description: "Your wallet address has been copied to clipboard.",
-    // });
+    copyWalletAddress.onCopy();
+    toast({
+      title: "Copied to Clipboard",
+      description: "Your wallet address has been copied to clipboard.",
+    });
   }
 
   const ConnectWalletButton = (
@@ -123,9 +123,13 @@ const AppNavbar = ({
         <chakra.div h="4.5rem" mx="auto" maxW="1200px">
           <Flex w="full" h="full" px="6" align="center" justify="space-between">
             <Flex align="center">
-              <Text onClick={onCopyWalletAddress}>
-                {globalContext.truncatedWalletAddress}
-              </Text>
+              <GlobalContext.Consumer>
+                {(value) => (
+                  <Text cursor="pointer" onClick={onCopyWalletAddress}>
+                    {value.truncatedWalletAddress}
+                  </Text>
+                )}
+              </GlobalContext.Consumer>
             </Flex>
 
             <Flex
