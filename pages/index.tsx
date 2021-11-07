@@ -1,8 +1,10 @@
-import { Box, Text } from "@chakra-ui/layout";
+import { Box, Text, Wrap, WrapItem } from "@chakra-ui/layout";
 import type { NextPage } from "next";
 import AppMainLayout from "../layouts/AppMainLayout";
 import { useWallet } from "../hooks/useWallet.hook";
 import { useEffect } from "react";
+import { Button } from "@chakra-ui/button";
+import AppGiphyListContainer from "../components/AppGiphyListContainer";
 
 const Home: NextPage = () => {
   const wallet = useWallet();
@@ -29,7 +31,11 @@ const Home: NextPage = () => {
           <Text fontSize="2xl">
             View your GIF collection in the metaverse ✨
           </Text>
+          <Button mt={2}>Get Started</Button>
         </Box>
+      </Box>
+      <Box my={32}>
+        <AppGiphyListContainer />
       </Box>
     </AppMainLayout>
   );

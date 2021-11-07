@@ -66,8 +66,8 @@ export const useWallet = () => {
       const response = await solana.connect();
       const walletAddress = response.publicKey?.toString();
       console.log("✅ Connected with Public Key:", walletAddress);
-      setWalletAddress(walletAddress);
       console.log("[useWallet->connect] walletAddress", walletAddress);
+      setWalletAddress(walletAddress);
     } catch (error: any) {
       console.error(error);
 

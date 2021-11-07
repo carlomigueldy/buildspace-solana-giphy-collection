@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/layout";
+import { Box } from "@chakra-ui/layout";
 import AppFooter from "../components/AppFooter";
 import AppNavbar from "../components/AppNavbar";
 
@@ -20,7 +20,9 @@ const AppMainLayout = ({
         showConnectWallet={showConnectWallet}
       />
 
-      {<Box minHeight="100vh">{children}</Box>}
+      <Box mx="auto" maxW="1200px" minHeight="100vh">
+        {children}
+      </Box>
 
       <AppFooter />
     </>
