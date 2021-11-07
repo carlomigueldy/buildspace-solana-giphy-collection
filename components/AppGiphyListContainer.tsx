@@ -3,6 +3,7 @@ import { Image } from "@chakra-ui/image";
 import { Input } from "@chakra-ui/input";
 import { Box, Wrap, WrapItem } from "@chakra-ui/layout";
 import { chakra } from "@chakra-ui/system";
+import { PublicKey } from "@solana/web3.js";
 import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { GIFS } from "../constants/giphy";
@@ -10,6 +11,11 @@ import GlobalContext from "../context/global";
 import useGiphyPortalIdl from "../hooks/useGiphyPortalIdl.hook";
 import useLogger from "../hooks/useLogger.hook";
 import { useWallet } from "../hooks/useWallet.hook";
+
+export type Giphy = {
+  gifLink: string;
+  userAddress: PublicKey;
+};
 
 const AppGiphyListContainer = () => {
   const log = useLogger("AppGiphyListContainer");
@@ -22,7 +28,7 @@ const AppGiphyListContainer = () => {
     watch,
     formState: { errors },
   } = useForm();
-  const [giphyList, setGiphyList] = useState<string[] | null | undefined>(null);
+  const [giphyList, setGiphyList] = useState<Giphy[] | null | undefined>(null);
 
   useEffect(() => {
     getGiphyList();
@@ -87,14 +93,14 @@ const AppGiphyListContainer = () => {
               return (
                 <WrapItem key={index}>
                   <Image
-                    src={gif}
+                    src={gif.gifLink}
                     borderRadius="sm"
-                    alt={gif}
+                    alt={gif.gifLink}
                     height="200"
                     width="200"
                     transition="all .2s ease-in-out"
                     cursor="pointer"
-                    onClick={() => window.open(gif, "_blank")}
+                    onClick={() => window.open(gif.gifLink, "_blank")}
                     _hover={{
                       transform: "scale(1.25)",
                     }}

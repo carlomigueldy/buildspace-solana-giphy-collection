@@ -10,20 +10,36 @@ import {
 import idl from "../idl/giphyportal.json";
 import useLogger from "./useLogger.hook";
 import useSolana from "./useSolana.hook";
+import kp from "../keypair.json";
+import { useEffect, useState } from "react";
+import { useToast } from "@chakra-ui/toast";
 
 const useGiphyPortalIdl = () => {
   const log = useLogger("useGiphyPortalIdl");
   const solana = useSolana();
-  const baseAccount = Keypair.generate();
   const programId = new PublicKey(idl.metadata.address);
+  const toast = useToast();
+  const [baseAccount, setBaseAccount] = useState<Keypair>();
 
-  function getProgram() {
+  useEffect(() => {
+    const baseAccount = generateKeyPair();
+    setBaseAccount(baseAccount);
+  }, []);
+
+  function generateKeyPair(): Keypair {
+    const arr = Object.values(kp._keypair.secretKey);
+    const secret = new Uint8Array(arr);
+    const baseAccount = Keypair.fromSecretKey(secret);
+    return baseAccount;
+  }
+
+  function getProgram(): Program<Idl> {
     const provider = getProvider();
     const program = new Program(idl as Idl, programId, provider);
     return program;
   }
 
-  function getProvider() {
+  function getProvider(): Provider {
     const network = clusterApiUrl("devnet");
     const options = {
       preflightCommitment: "processed" as ConnectionConfig,
@@ -38,6 +54,11 @@ const useGiphyPortalIdl = () => {
   }
 
   const getGiphyList = async () => {
+    if (!baseAccount) {
+      _noBaseAccountFoundToast();
+      return;
+    }
+
     try {
       const program = getProgram();
       const account = await program.account.baseAccount.fetch(
@@ -52,6 +73,11 @@ const useGiphyPortalIdl = () => {
   };
 
   const createGiphyAccount = async () => {
+    if (!baseAccount) {
+      _noBaseAccountFoundToast();
+      return;
+    }
+
     try {
       const provider = getProvider();
       const program = getProgram();
@@ -73,6 +99,11 @@ const useGiphyPortalIdl = () => {
   };
 
   const sendGiphy = async (giphyUrl: string) => {
+    if (!baseAccount) {
+      _noBaseAccountFoundToast();
+      return;
+    }
+
     try {
       const program = getProgram();
       await program.rpc.addGif(giphyUrl, {
@@ -85,6 +116,15 @@ const useGiphyPortalIdl = () => {
       log.e("Error sending GIF:", error);
     }
   };
+
+  function _noBaseAccountFoundToast() {
+    toast({
+      title: "No Account",
+      description: "No base account found",
+      status: "warning",
+    });
+    log.w("No base account found", __dirname);
+  }
 
   return {
     idl,
