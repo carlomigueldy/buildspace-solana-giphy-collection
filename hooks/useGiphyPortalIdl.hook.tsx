@@ -14,6 +14,11 @@ import kp from "../keypair.json";
 import { useEffect, useState } from "react";
 import { useToast } from "@chakra-ui/toast";
 
+export type Giphy = {
+  gifLink: string;
+  userAddress: PublicKey;
+};
+
 const useGiphyPortalIdl = () => {
   const log = useLogger("useGiphyPortalIdl");
   const solana = useSolana();
@@ -53,10 +58,10 @@ const useGiphyPortalIdl = () => {
     return provider;
   }
 
-  const getGiphyList = async () => {
+  const getGiphyList = async (): Promise<Giphy[] | null> => {
     if (!baseAccount) {
       _noBaseAccountFoundToast();
-      return;
+      return null;
     }
 
     try {
