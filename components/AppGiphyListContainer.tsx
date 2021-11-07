@@ -3,16 +3,33 @@ import { Image } from "@chakra-ui/image";
 import { Input } from "@chakra-ui/input";
 import { Box, Wrap, WrapItem } from "@chakra-ui/layout";
 import { chakra } from "@chakra-ui/system";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { GIFS } from "../constants/giphy";
+import GlobalContext from "../context/global";
+import { useWallet } from "../hooks/useWallet.hook";
 
 const AppGiphyListContainer = () => {
+  const wallet = useWallet();
+  const globalContext = useContext(GlobalContext);
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
+  const [giphyList, setGiphyList] = useState<string[]>([]);
+
+  useEffect(() => {
+    setGiphyList(GIFS);
+  }, []);
+
+  useEffect(() => {
+    console.log(
+      "[AppGiphyListContainer] wallet.walletAddress",
+      globalContext.walletAddress
+    );
+  }, [globalContext.walletAddress]);
 
   const onSubmit = handleSubmit((data) => {
     console.log(data);
@@ -40,7 +57,7 @@ const AppGiphyListContainer = () => {
       </form>
 
       <Wrap spacing="30px" my={10} mx={5}>
-        {GIFS.map((gif, index) => {
+        {giphyList.map((gif, index) => {
           return (
             <WrapItem key={index}>
               <Image
