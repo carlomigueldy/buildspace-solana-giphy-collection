@@ -1,10 +1,8 @@
-import { Box, Link, Text } from "@chakra-ui/layout";
-import { useToast } from "@chakra-ui/toast";
+import { Box, Text } from "@chakra-ui/layout";
 import type { NextPage } from "next";
-import { useEffect, useState } from "react";
 import AppMainLayout from "../layouts/AppMainLayout";
-import * as web3 from "@solana/web3.js";
 import { useWallet } from "../hooks/useWallet.hook";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
   const wallet = useWallet();
@@ -14,7 +12,10 @@ const Home: NextPage = () => {
   }, []);
 
   return (
-    <AppMainLayout onClickConnectWallet={wallet.connect}>
+    <AppMainLayout
+      onClickConnectWallet={wallet.connect}
+      showConnectWallet={!wallet.connected}
+    >
       <Box
         display="flex"
         justifyContent="center"

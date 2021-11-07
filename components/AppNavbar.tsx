@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import {
   chakra,
   Flex,
@@ -13,6 +13,9 @@ import {
   Box,
   VStack,
   Button,
+  useClipboard,
+  Text,
+  useToast,
 } from "@chakra-ui/react";
 import { useViewportScroll } from "framer-motion";
 import { FaMoon, FaSun, FaHeart } from "react-icons/fa";
@@ -23,13 +26,21 @@ import {
   AiOutlineInbox,
 } from "react-icons/ai";
 import { BsFillCameraVideoFill } from "react-icons/bs";
+import GlobalContext from "../context/global";
 
 export type AppNavbarProps = {
   onClickConnectWallet?: () => void;
+  showConnectWallet?: boolean;
 };
 
-const AppNavbar = ({ onClickConnectWallet }: AppNavbarProps) => {
+const AppNavbar = ({
+  onClickConnectWallet,
+  showConnectWallet,
+}: AppNavbarProps) => {
   const mobileNav = useDisclosure();
+  const globalContext = useContext(GlobalContext);
+  const copyWalletAddress = useClipboard(globalContext.walletAddress ?? "");
+  const toast = useToast();
 
   const { toggleColorMode: toggleMode } = useColorMode();
   const text = useColorModeValue("dark", "light");
@@ -44,6 +55,14 @@ const AppNavbar = ({ onClickConnectWallet }: AppNavbarProps) => {
   React.useEffect(() => {
     return scrollY.onChange(() => setY(scrollY.get()));
   }, [scrollY]);
+
+  function onCopyWalletAddress() {
+    // copyWalletAddress.onCopy();
+    // toast({
+    //   title: "Copied to Clipboard",
+    //   description: "Your wallet address has been copied to clipboard.",
+    // });
+  }
 
   const ConnectWalletButton = (
     <Button colorScheme="twitter" ml="2" onClick={onClickConnectWallet}>
@@ -87,6 +106,7 @@ const AppNavbar = ({ onClickConnectWallet }: AppNavbarProps) => {
       </Button>
     </VStack>
   );
+
   return (
     <Box pos="fixed" top={0} left={0} right={0}>
       <chakra.header
@@ -103,9 +123,9 @@ const AppNavbar = ({ onClickConnectWallet }: AppNavbarProps) => {
         <chakra.div h="4.5rem" mx="auto" maxW="1200px">
           <Flex w="full" h="full" px="6" align="center" justify="space-between">
             <Flex align="center">
-              <Link href="/">
-                <HStack>{/* <Logo /> */}</HStack>
-              </Link>
+              <Text onClick={onCopyWalletAddress}>
+                {globalContext.truncatedWalletAddress}
+              </Text>
             </Flex>
 
             <Flex
@@ -141,7 +161,7 @@ const AppNavbar = ({ onClickConnectWallet }: AppNavbarProps) => {
                 onClick={toggleMode}
                 icon={<SwitchIcon />}
               />
-              {ConnectWalletButton}
+              {showConnectWallet ? ConnectWalletButton : null}
               <IconButton
                 display={{ base: "flex", md: "none" }}
                 aria-label="Open menu"

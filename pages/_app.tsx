@@ -3,6 +3,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { themes } from "../themes";
 import { meta } from "../constants/meta";
 import Head from "next/head";
+import GlobalContext from "../context/global";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -68,7 +69,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
 
       <ChakraProvider theme={themes.default}>
-        <Component {...pageProps} />
+        <GlobalContext.Provider value={{ walletAddress: null }}>
+          <Component {...pageProps} />
+        </GlobalContext.Provider>
       </ChakraProvider>
     </>
   );
