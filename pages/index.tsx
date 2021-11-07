@@ -2,7 +2,6 @@ import type { NextPage } from "next";
 import { Box, Text } from "@chakra-ui/layout";
 import { useWallet } from "../hooks/useWallet.hook";
 import { useEffect } from "react";
-import { Button } from "@chakra-ui/button";
 import AppMainLayout from "../layouts/AppMainLayout";
 import AppGiphyListContainer from "../components/AppGiphyListContainer";
 
@@ -31,7 +30,7 @@ const Home: NextPage = () => {
           <Text fontSize="2xl">
             View your GIF collection in the metaverse ✨
           </Text>
-          <Button mt={2}>Get Started</Button>
+          {/* <Button mt={2}>Get Started</Button> */}
         </Box>
       </Box>
       <Box my={32}>

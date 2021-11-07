@@ -142,8 +142,8 @@ const AppNavbar = ({
               <HStack spacing="5" display={{ base: "none", md: "flex" }}>
                 <Link
                   isExternal
-                  aria-label="Go to Choc UI GitHub page"
-                  href="https://github.com/anubra266/choc-ui"
+                  aria-label="Go to Solana GIPHY Collection GitHub repository"
+                  href="https://github.com/carlomigueldy/solana-giphy-collection"
                 >
                   <Icon
                     as={AiFillGithub}
